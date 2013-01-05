@@ -1,0 +1,68 @@
+apply plugin:"scala"
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.3'
+}
+
+def encoding = 'UTF-8'
+
+[compileScala, compileTestScala].each{
+	it.options.encoding = encoding
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+
+
+dependencies {
+	scalaTools  (
+		[group: "org.scala-lang", name: "scala-compiler",version: "2.10.0"],
+		[group: "org.scala-lang", name: "scala-library",version: "2.10.0"],
+		//[group: "org.scala-lang", name: "scala-actors",version: "2.10.0"],
+			
+	)
+	
+	compile (
+		[group: "org.scala-lang", name: "scala-library",version: "2.10.0"],
+		[group: "net.liftweb",name:"lift-json_2.9.1", version:"2.4"],
+
+		[group: "org.clapper", name: "argot_2.9.2",version: "0.4"],
+		[group: "org.clapper", name: "grizzled-scala_2.9.0",version: "1.0.11.1"],
+	)
+	
+	testCompile (
+		[group: 'junit', name:'junit', version:'4.11'],
+		[group: "org.specs2", name: "specs2_2.10", version:"1.13"],
+		//[group: 'org.specs2', name: 'specs2-scalaz-core_2.9.1',version:'6.0.1'],
+		
+		[group: "commons-io", name: "commons-io",version: "1.3.2"],
+		
+		[group: "net.liftweb",name:"lift-json_2.9.1", version:"2.4"],
+	)
+}
+
+
+jar {
+	manifest {
+		attributes 'Main-class': "com.kissaki.ksscmessenger.KSScMessenger"
+	}
+	
+	from {
+		configurations.runtime.collect {
+			if (it.isDirectory()){
+			} else {
+				it
+				zipTree(it)
+			}
+		}
+	}
+	
+	from {
+		fileTree(dir: 'resources', includes: ['*.*'])
+	}
+	
+	//exclude('scala/**') 
+}

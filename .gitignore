@@ -6,3 +6,13 @@
 build/*
 
 target/*
+
+KSScMessenger.iml
+
+KSScMessenger.ipr
+
+KSScMessenger.iws
+
+jars/*
+
+out/*

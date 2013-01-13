@@ -4,6 +4,10 @@ import org.specs2.mutable._
 import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
 
+
+import com.kissaki.KSScMessenger
+
+
 @RunWith(classOf[JUnitRunner])
 class KSScMessengerTests extends Specification {
 
@@ -21,8 +25,16 @@ class KSScMessengerTests extends Specification {
 
   /*
   centralがなくせる筈なので、そのへんからやってみるか。
-
   */
+  "message" should {
+    "receiveable" in {
+      val messenger = new KSScMessenger
+
+      // messenger.callMyself("something")
+    }
+
+  }
+
 
 
 

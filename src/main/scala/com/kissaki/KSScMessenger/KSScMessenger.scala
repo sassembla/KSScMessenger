@@ -1,17 +1,29 @@
-import akka.actors._
+package com.kissaki.KSScMessenger
 
 
+import akka.actor._
+
+/*
+	version 0.1.0	01/13/13 21:12:27
 
 
-class  KSScMessenger () extends Actor {
-  println("ここに来てる")
+	ラッパーがいらない気がしてるんだよなー。
+*/
+class  KSScMessenger () {
+
 	val system = ActorSystem("Hoge")
-  //val hogeActor = system.actorOf(Props[KSScMessenger])
+	val actor = system.actorOf(Props[KSScActor], "KSScActor")
 
 
-  // hogeActor ! 100
-  // hogeActor ! "taro"
+  actor ! "100"
 
-  system.shutdown()
+  system.shutdown
 
+}
+
+class KSScActor() extends Actor {
+	println("KSScActor initialize")
+	 def receive = {
+  	case a => println("hereComes receive	"+a)
+  }
 }

@@ -12,27 +12,33 @@ def encoding = 'UTF-8'
 }
 
 repositories {
+	mavenRepo urls: "http://myrepo.net/repo"
 	mavenCentral()
 }
 
 
-
-
 dependencies {
+
 	scalaTools  (
 		[group: "org.scala-lang", name: "scala-compiler",version: "2.10.0"],
 		[group: "org.scala-lang", name: "scala-library",version: "2.10.0"],
+		// [group: "org.scala-lang", name: "akka-actors",version: "2.10.0"],not yet applied. 01/13/13 22:27:38	
 	)
-	
-	compile (
-		fileTree(dir: 'jars/akka-2.1.0/lib/akka/', include: '*.jar'),
 
+	compile (
 		[group: "org.scala-lang", name: "scala-library",version: "2.10.0"],
 		[group: "net.liftweb",name:"lift-json_2.9.1", version:"2.4"],
 
 		[group: "org.clapper", name: "argot_2.9.2",version: "0.4"],
 		[group: "org.clapper", name: "grizzled-scala_2.9.0",version: "1.0.11.1"],
+
+		[group: "com.typesafe.akka", name: "akka-actor_2.10",version: "2.1.0"],
+		// [group: "com.typesafe.akka", name: "akka-kernel",version: "2.1.0"],
+		// [group: "com.typesafe.akka", name: "akka-remote",version: "2.1.0"],
+
 	)
+
+	
 	
 	testCompile (
 		[group: 'junit', name:'junit', version:'4.11'],
@@ -47,7 +53,7 @@ dependencies {
 
 jar {
 	manifest {
-		attributes 'Main-class': "com.kissaki.SampleAppMain"
+		attributes 'Main-class': "com.kissaki.KSScMessenger.SampleAppMain"
 	}
 	
 	from {
@@ -58,10 +64,6 @@ jar {
 				zipTree(it)
 			}
 		}
-	}
-	
-	from {
-		fileTree(dir: 'resources', includes: ['*.*'])
 	}
 	
 }

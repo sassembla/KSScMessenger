@@ -3,9 +3,8 @@ package com.kissaki.ksscmessenger.KSScMessengerTests
 import org.specs2.mutable._
 import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
-
-
 import com.kissaki.KSScMessenger
+import com.kissaki.KSScMessenger.KSScMessenger
 
 
 @RunWith(classOf[JUnitRunner])

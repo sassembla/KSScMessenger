@@ -12,7 +12,6 @@ def encoding = 'UTF-8'
 }
 
 repositories {
-	mavenRepo urls: "http://myrepo.net/repo"
 	mavenCentral()
 }
 

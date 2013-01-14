@@ -10,12 +10,10 @@ import akka.routing.BroadcastRouter
 	ラッパーがいらない気がしてるんだよなー。
 */
 class  KSScMessenger () {
-
-
-	val system = ActorSystem("Hoge")
+	val system = ActorSystem("namespace")
 	
-	val broadcastRouter = system.actorOf(Props[KSScActor].withRouter(BroadcastRouter(1)), "router")
-	broadcastRouter ! "this is a broadcast message"
+	
+	
 
   system.shutdown
 

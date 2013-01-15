@@ -16,3 +16,7 @@ KSScMessenger.iws
 jars/*
 
 out/*
+
+.ensime
+
+.ensime_lucene/*

@@ -49,16 +49,12 @@ class  KSScMessenger (name:String, receiver:String => Unit) extends TimeAssert {
 	def parentId : String = ""//parent(0).id
 
 
-	def findParent(targetParentName:String) = {
+	def findParent(targetParentName:String, specificMessengerId:String = "") = {
 	  timeAssert("01/15/13 12:05:54", "not yet applied")
-	}
-
-	def findParentWithSpecificId(targetParentName:String, specificMessengerId:String) = {
-	  timeAssert("01/15/13 12:05:56", "not yet applied")
 	}
 	
 	def injectMyselfToChild(childMessenger:KSScMessenger) = {
-		childMessenger.findParentWithSpecificId(myName, myId)
+		childMessenger.findParent(myName, myId)
 		timeAssert("01/15/13 12:05:58", "not yet applied")
 	}
 	

@@ -7,29 +7,75 @@ import com.kissaki.KSScMessenger
 import com.kissaki.KSScMessenger.KSScMessenger
 
 
+import akka.routing.BroadcastRouter
+import akka.actor._
+
+import scala.concurrent.duration._
+import akka.util.Timeout
+import akka.pattern.ask
+
+
+class AkkaBroadcastTest() extends Actor {
+  println("akkabt")
+  def receive = {
+    case a => println("a is "+a)
+  }
+}
 
 @RunWith(classOf[JUnitRunner])
 class KSScMessengerTests extends Specification {
 
+	implicit val timeout = Timeout(5.0 seconds)
+
   /*
-  test about relationships.
+  test other-basic
   */
+  "broadcast is" should {
+    "どうなのかな　など、日本語でもOK" in {
+
+      class AkkaBroadcastTest_A() extends Actor {
+        def receive = {
+          case a:Throwable => println("a is "+a)
+        }
+      }
+      
+      class AkkaBroadcastTest_B() extends Actor {
+        def receive = {
+          case b:Throwable => println("b is "+b)
+        }
+      }
+
+      val system = ActorSystem("Hoge")
+      // val actor = system.actorOf(Props[AkkaBroadcastTest_A], "AkkaBroadcastTest_A")
+      // actor ! "100"
+
+      /*
+      これ、10件作ってる。どういう設計思想なんだろう。
+      */
+      val broadcastRouter = system.actorOf(Props[AkkaBroadcastTest].withRouter(BroadcastRouter(10)), "router")
+      println("before")
+
+      broadcastRouter ? "this is a broadcast message"
+      
+      println("sended")
+
+
+      system.shutdown
+      println("shutted down")
+
+
+      //"false" must be_==("not yet applied")
+    }
+  }
+
+
   "relationship" should {
     
     val TEST_PARENT = "01/15/13 21:44:20"
 
     class Parent {
       val messenger = new KSScMessenger(TEST_PARENT, parentReceiver)
-      def parentReceiver(input:String) = {
-        // "どんなことで分解するか、っていうと、input = concreteから何かすればいいと思うのだが、はてさて"
-
-        /*
-        やりたい事は、
-        ・副作用でベキ的に受ける
-          caseに発展できればいいよね
-        */
-
-      }
+      def parentReceiver(input:String) = {}
     }
 
     val TEST_CHILD_A = "01/15/13 21:44:20"

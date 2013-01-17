@@ -55,7 +55,12 @@ class KSScMessengerTests extends Specification {
       val broadcastRouter = system.actorOf(Props[AkkaBroadcastTest].withRouter(BroadcastRouter(10)), "router")
       println("before")
 
-      broadcastRouter ? "this is a broadcast message"
+      //非同期
+      // broadcastRouter ! "this is a broadcast message1"
+      // broadcastRouter ! "this is a broadcast message2"
+      
+      broadcastRouter ? "this is a broadcast message1"
+      broadcastRouter ? "this is a broadcast message2"
       
       println("sended")
 

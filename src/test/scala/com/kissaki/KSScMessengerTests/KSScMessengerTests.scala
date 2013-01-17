@@ -6,6 +6,7 @@ import org.junit.runner.RunWith
 import com.kissaki.KSScMessenger
 import com.kissaki.KSScMessenger.KSScMessenger
 
+import java.util.UUID
 
 import akka.routing.BroadcastRouter
 import akka.actor._
@@ -14,11 +15,18 @@ import scala.concurrent.duration._
 import akka.util.Timeout
 import akka.pattern.ask
 
-
+case class Message(s : String)
 class AkkaBroadcastTest() extends Actor {
-  println("akkabt")
+  val name = UUID.randomUUID().toString()
+
+  println("akkabt "+name)
+
+  override def postStop {
+    println("run!")
+  }
   def receive = {
-    case a => println("a is "+a)
+    // case a => println("a is "+a)
+    case d: Message ⇒ println("m"+d.s + " /i am "+name)
   }
 }
 
@@ -46,30 +54,28 @@ class KSScMessengerTests extends Specification {
       }
 
       val system = ActorSystem("Hoge")
-      // val actor = system.actorOf(Props[AkkaBroadcastTest_A], "AkkaBroadcastTest_A")
-      // actor ! "100"
 
-      /*
-      これ、10件作ってる。どういう設計思想なんだろう。
-      */
-      val broadcastRouter = system.actorOf(Props[AkkaBroadcastTest].withRouter(BroadcastRouter(10)), "router")
-      println("before")
+     // val actor = system.actorOf(Props[AkkaBroadcastTest], "AkkaBroadcastTest")
 
-      //非同期
-      // broadcastRouter ! "this is a broadcast message1"
-      // broadcastRouter ! "this is a broadcast message2"
-      
-      broadcastRouter ? "this is a broadcast message1"
-      broadcastRouter ? "this is a broadcast message2"
-      
-      println("sended")
+      val listener = system.actorOf(Props[AkkaBroadcastTest])
 
+      system.eventStream.subscribe(listener, classOf[Message])
+      // actor.stop
+      // val actor2 = system.actorOf(Props[AkkaBroadcastTest], "AkkaBroadcastTest2")
+      // actor2 ? Message("not for ar")
 
-      system.shutdown
-      println("shutted down")
+      system.eventStream.publish(Message("hereComes!!!!"))
+
+      val listener2 = system.actorOf(Props[AkkaBroadcastTest])
+      system.eventStream.subscribe(listener2, classOf[Message])
+
+      system.eventStream.publish(Message("hereComes2!!!!2"))      
+
+    //  system.shutdown
+      // println("shutted down")
 
 
-      //"false" must be_==("not yet applied")
+      "false" must be_==("not yet applied")
     }
   }
 

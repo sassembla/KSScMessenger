@@ -15,71 +15,14 @@ import scala.concurrent.duration._
 import akka.util.Timeout
 import akka.pattern.ask
 
-case class Message(s : String)
-class AkkaBroadcastTest() extends Actor {
-  val name = UUID.randomUUID().toString()
 
-  println("akkabt "+name)
-
-  override def postStop {
-    println("run!")
-  }
-  def receive = {
-    // case a => println("a is "+a)
-    case d: Message ⇒ println("m"+d.s + " /i am "+name)
-  }
-}
 
 @RunWith(classOf[JUnitRunner])
 class KSScMessengerTests extends Specification {
 
 	implicit val timeout = Timeout(5.0 seconds)
 
-  /*
-  test other-basic
-  */
-  "broadcast is" should {
-    "どうなのかな　など、日本語でもOK" in {
-
-      class AkkaBroadcastTest_A() extends Actor {
-        def receive = {
-          case a:Throwable => println("a is "+a)
-        }
-      }
-      
-      class AkkaBroadcastTest_B() extends Actor {
-        def receive = {
-          case b:Throwable => println("b is "+b)
-        }
-      }
-
-      val system = ActorSystem("Hoge")
-
-     // val actor = system.actorOf(Props[AkkaBroadcastTest], "AkkaBroadcastTest")
-
-      val listener = system.actorOf(Props[AkkaBroadcastTest])
-
-      system.eventStream.subscribe(listener, classOf[Message])
-      // actor.stop
-      // val actor2 = system.actorOf(Props[AkkaBroadcastTest], "AkkaBroadcastTest2")
-      // actor2 ? Message("not for ar")
-
-      system.eventStream.publish(Message("hereComes!!!!"))
-
-      val listener2 = system.actorOf(Props[AkkaBroadcastTest])
-      system.eventStream.subscribe(listener2, classOf[Message])
-
-      system.eventStream.publish(Message("hereComes2!!!!2"))      
-
-    //  system.shutdown
-      // println("shutted down")
-
-
-      "false" must be_==("not yet applied")
-    }
-  }
-
-
+  
   "relationship" should {
     
     val TEST_PARENT = "01/15/13 21:44:20"
@@ -108,18 +51,19 @@ class KSScMessengerTests extends Specification {
 
 
     "make parent" in {
-      val before = childA.messenger.log.size
+      // val before = childA.messenger.log.size
       
-      childA.messenger.findParent(TEST_PARENT)
+      // childA.messenger.findParent(TEST_PARENT)
 
-      val after = childA.messenger.log.size
-      after must be_==(before + 1)//1ですむかなあ、、
+      // val after = childA.messenger.log.size
+      // after must be_==(before + 1)//1ですむかなあ、、
+      "false" must be_==("not yet applied")
     }
 
     "make child" in {
-      val after = childA.messenger.log.size
-      println("after  "+after)
-      parent.messenger.injectMyselfToChild(childA.messenger)
+      // val after = childA.messenger.log.size
+      // println("after  "+after)
+      // parent.messenger.injectMyselfToChild(childA.messenger)
       "false" must be_==("not yet applied")
     }
 

@@ -1,113 +1,119 @@
 package com.kissaki.KSScMessenger
 
-
 import akka.actor._
 import akka.routing.BroadcastRouter
 import java.util.UUID
 import scala.collection.mutable.ListBuffer
+import java.text.SimpleDateFormat
+import java.util.Date
 
 /*
 	version 0.1.0	01/13/13 21:12:27
 
 */
 
+case class Message(message: String)
+
 case class MessengerTrait
 
 trait TimeAssert {
-	def timeAssert(timestamp:String, message: String, delay:Int = 0) = {
-		
-		val delayed = {
+  val SecUnit = 1000
 
-			// 01/15/13 10:52:06
+  def timeAssert(timestamp: String, message: String, delaySec: Int = 0) = {
+    val timestampDate = new SimpleDateFormat("MM/dd/yy HH:mm:ss").parse(timestamp)
+    val limit = timestampDate.getTime + delaySec * SecUnit
 
-			true
-		}
+    val currentDate = new Date
+    val currentDateTime = currentDate.getTime
 
-		assert(delayed, "BOMB:"+message)
-	}
+    val distance = (limit - currentDateTime)
+
+    assert(0 < distance, "TimeAssert BOMB:" + message + "	/" + distance / SecUnit + "	sec over")
+    println("TimeAssert passed:" + message + "	/" + distance / SecUnit + "	sec left")
+  }
 }
 
 trait MessageReceiver extends MessengerTrait {
-	def ast = println("hereComes!! trait")
+  def ast = println("hereComes!! trait")
 }
 
-class  KSScMessenger (name:String, receiver:String => Unit) extends TimeAssert {
-	val myName = name
-	val myId = UUID.randomUUID().toString()
+class KSScMessenger(name: String, receiver: String => Unit) extends TimeAssert {
+  val myName = name
+  val myId = UUID.randomUUID.toString
 
-	timeAssert("01/15/13 11:03:38", "ログ、用意してみよう http://doc.akka.io/docs/akka/2.0/scala/logging.html")
-	val log : ListBuffer[String] = ListBuffer()
+  // val childList : ListBuffer[MessengerActor] = ListBuffer() 直にポインタを持たないでもOKな筈！！！
+  // val parent : ListBuffer[MessengerActor] = ListBuffer()
 
-	timeAssert("01/15/13 11:03:44", "event bus http://doc.akka.io/docs/akka/2.0/scala/event-bus.html")
+  def parentName: String = "" //parent(0).name
+  def parentId: String = "" //parent(0).id
 
+  def findParent(targetParentName: String, specificMessengerId: String = "") = {
+    timeAssert("01/19/13 00:29:22", "not yet applied", 1000)
+  }
 
+  def injectMyselfToChild(childMessenger: KSScMessenger) = {
+    childMessenger.findParent(myName, myId)
+    timeAssert("01/19/13 00:29:30", "not yet applied", 1000)
+  }
 
-	// val childList : ListBuffer[MessengerActor] = ListBuffer() 直にポインタを持たないでもOKな筈！！！
-	// val parent : ListBuffer[MessengerActor] = ListBuffer()
+  def callMyself(arg: String) = {
 
-	def parentName : String = ""//parent(0).name
-	def parentId : String = ""//parent(0).id
+  }
 
+  def callParent(arg: String) = {
 
-	def findParent(targetParentName:String, specificMessengerId:String = "") = {
-	  timeAssert("01/15/13 12:05:54", "not yet applied")
-	}
+  }
+
+  def callChild(arg: String) = {
+
+  }
+
+  def callback(arg: String) = {
+    timeAssert("01/15/13 12:06:08", "クロージャ渡されるのもありかな。")
+  }
+
+  val system = ActorSystem("namespace")
+	val logListener = system.actorOf(Props[MyEventListener])
 	
-	def injectMyselfToChild(childMessenger:KSScMessenger) = {
-		childMessenger.findParent(myName, myId)
-		timeAssert("01/15/13 12:05:58", "not yet applied")
-	}
-	
+  //join network
+  val actor = system.actorOf(Props[KSScActor])
+  system.eventStream.subscribe(actor, classOf[Message])
 
+  def callAny = system.eventStream.publish(Message("hereComes!!!!"))
 
-	def callMyself(arg: String) = {
-		
-	}
+  def removeFromNetwork = system.shutdown
 
-	def callParent(arg: String) = {
-		
-	}
-
-	def callChild(arg: String) = {
-		
-	}
-	
-	def callback(arg: String) = {
-		timeAssert("01/15/13 12:06:08", "クロージャ渡されるのもありかな。")
-	}
-
-
-	val system = ActorSystem("namespace")
-	
-	println("receiver	"+receiver)
-	
-	receiver("from Messenger")
-
-	/*
-	Booter
-
-	特定のオブジェクトの特定のThreadを叩く。
-
-	そのオブジェクトがtraitを積んでいる事は、どう表現すればいいんだろう。
-	→いらん。関数積めばいいや。
-
-
-	Centralがあれば、そこに向かってつなぐ
-	systemの名称が同一なら、そのままでいいような。
-	call to system　みたいなのが有ればいいんだよな。
-
-	Broadcastの実験で、Routerを使って複数同じActorを作る事が出来ていた。
-	なので、そのへんを応用すれば、Broadcastは実現できる筈。
-	*/
 	
 
-	system.shutdown
-
+  callAny
+  removeFromNetwork
 }
 
-class KSScActor() extends Actor {
-	println("KSScActor initialize")
-	 def receive = {
-  	case a => println("hereComes receive	"+a)
+class KSScActor extends Actor with ActorLogging {
+  import java.util.UUID
+
+  def receive = {
+    case a: Message => {
+    	log.debug("received")
+    }
+  }
+}
+
+
+import akka.event.Logging.InitializeLogger
+import akka.event.Logging.LoggerInitialized
+import akka.event.Logging.Error
+import akka.event.Logging.Warning
+import akka.event.Logging.Info
+import akka.event.Logging.Debug
+ 
+class MyEventListener extends Actor {
+	println("loggenerated")
+  def receive = {
+    case InitializeLogger(_)                        ⇒ print("initilaized")
+    case Error(cause, logSource, logClass, message) ⇒ print("Err	"+message)
+    case Warning(logSource, logClass, message)      ⇒ print("War	"+message)
+    case Info(logSource, logClass, message)         ⇒ print("Inf	"+message)
+    case Debug(logSource, logClass, message)        ⇒ print("Deb	"+logSource+ logClass+ message)
   }
 }
